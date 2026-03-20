@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>2026 Energy Storage Revenue Analysis</title>
+    <!-- 引入 Chart.js 绘图库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        body { font-family: 'Microsoft YaHei', sans-serif; margin: 40px; background-color: #f4f7f6; }
+        .container { width: 850px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+        h2 { text-align: center; color: #2c3e50; }
+        .info { margin-top: 25px; padding: 15px; background: #eef; border-left: 5px solid #3498db; line-height: 1.6; }
+        .footer { margin-top: 20px; text-align: center; font-size: 12px; color: #999; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>2026年四省独立储能收益构成最终修正对比 (100MW/200MWh)</h2>
+        <!-- 画布容器 -->
+        <canvas id="revenueChart" height="400"></canvas>
+        
+        <div class="info">
+            <p><strong>🚨 2026-03-20 核心修正结论:</strong></p>
+            <ul>
+                <li><strong>甘肃：</strong>容量补偿退坡至 <b>80元/kW·年</b> (年度总计800万)，依赖政府补贴模式终结。</li>
+                <li><strong>山东：</strong>租赁单价跌至 <b>80元/kW·年</b> 极限位，需依托 <b>1.7次/日</b> 高频交易对冲收入下滑。</li>
+                <li><strong>蒙西：</strong>凭借 <b>0.28元/kWh 放电补贴</b> 及稳健政策组合，成为2026年收益冠军 (5720万)。</li>
+                <li><strong>山西：</strong><b>调频(FM)里程费 780万</b>，辅助服务溢价贡献率位居四省之首。</li>
+            </ul>
+        </div>
+        <div class="footer">数据来源：XMODATA 2025-2026 现货实测评估汇报版</div>
+    </div>
+
+    <script>
+        // 确保页面加载完成后执行绘图逻辑
+        window.onload = function() {
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['甘肃 (退坡模式)', '蒙西 (收益冠军)', '山西 (调频优势)', '山东 (极致套利)'],
+                    datasets: [
+                        { 
+                            label: '现货套利收益 (万元)', 
+                            data: [2850, 3100, 2900, 3400], 
+                            backgroundColor: '#3498db' // 蓝色表示市场收益
+                        },
+                        { 
+                            label: '容量补偿/补贴/租赁 (万元)', 
+                            data: [800, 2200, 1800, 1600], 
+                            backgroundColor: '#e67e22' // 橙色表示政策/固定收益
+                        },
+                        { 
+                            label: '辅助服务收益 (万元)', 
+                            data: [550, 420, 780, 500], 
+                            backgroundColor: '#9b59b6' // 紫色表示溢价收益
+                        }
+                    ]
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: { mode: 'index', intersect: false }
+                    },
+                    scales: { 
+                        x: { stacked: true }, 
+                        y: { 
+                            stacked: true, 
+                            beginAtZero: true, 
+                            title: { display: true, text: '年度收益预测 (万元)', font: { weight: 'bold' } } 
+                        } 
+                    } 
+                }
+            });
+        };
+    </script>
+</body>
+</html>
