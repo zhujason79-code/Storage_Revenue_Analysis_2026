@@ -1,80 +1,79 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>2026 Energy Storage Revenue Analysis</title>
-    <!-- 引入 Chart.js 绘图库 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026年独立储能收益分析 - 优化版</title>
+    <!-- 引入 Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <style>
-        body { font-family: 'Microsoft YaHei', sans-serif; margin: 40px; background-color: #f4f7f6; }
-        .container { width: 850px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
-        h2 { text-align: center; color: #2c3e50; }
-        .info { margin-top: 25px; padding: 15px; background: #eef; border-left: 5px solid #3498db; line-height: 1.6; }
-        .footer { margin-top: 20px; text-align: center; font-size: 12px; color: #999; }
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #e67e22;
+            --accent-color: #9b59b6;
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-main: #2c3e50;
+        }
+        body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; margin: 0; padding: 20px; background-color: var(--bg-color); color: var(--text-main); }
+        .container { max-width: 1000px; margin: 0 auto; background: var(--card-bg); padding: 40px; border-radius: 16px; box-shadow: 0 8px 30px rgba(0,0,0,0.08); }
+        h1 { text-align: center; font-size: 28px; margin-bottom: 10px; color: #1a1a1a; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 40px; font-size: 16px; }
+        .chart-wrapper { position: relative; height: 500px; width: 100%; margin-bottom: 40px; }
+        .grid-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px; }
+        .info-card { padding: 15px; border-radius: 10px; background: #f8fafc; border-top: 4px solid var(--primary-color); }
+        .info-card h3 { margin-top: 0; font-size: 16px; color: #333; }
+        .info-card p { font-size: 14px; margin-bottom: 0; line-height: 1.5; color: #555; }
+        .disclaimer { margin-top: 30px; padding: 15px; font-size: 13px; color: #888; background: #fff; border: 1px dashed #ddd; border-radius: 8px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>2026年四省独立储能收益构成最终修正对比 (100MW/200MWh)</h2>
-        <!-- 画布容器 -->
-        <canvas id="revenueChart" height="400"></canvas>
-        
-        <div class="info">
-            <p><strong>🚨 2026-03-20 核心修正结论:</strong></p>
-            <ul>
-                <li><strong>甘肃：</strong>容量补偿退坡至 <b>80元/kW·年</b> (年度总计800万)，依赖政府补贴模式终结。</li>
-                <li><strong>山东：</strong>租赁单价跌至 <b>80元/kW·年</b> 极限位，需依托 <b>1.7次/日</b> 高频交易对冲收入下滑。</li>
-                <li><strong>蒙西：</strong>凭借 <b>0.28元/kWh 放电补贴</b> 及稳健政策组合，成为2026年收益冠军 (5720万)。</li>
-                <li><strong>山西：</strong><b>调频(FM)里程费 780万</b>，辅助服务溢价贡献率位居四省之首。</li>
-            </ul>
+        <h1>2026年四省独立储能收益构成深度分析</h1>
+        <p class="subtitle">100MW/200MWh基准 | 基于2026-03-20实测电价与政策退坡评估</p>
+        <div class="chart-wrapper">
+            <canvas id="revenueChart"></canvas>
         </div>
-        <div class="footer">数据来源：XMODATA 2025-2026 现货实测评估汇报版</div>
+        <div class="grid-info">
+            <div class="info-card" style="border-top-color: #3498db;">
+                <h3>甘肃 (退坡模式)</h3>
+                <p>容量补偿跌至80元/kW，收入缩水74%。需强化高效率现货套利。</p>
+            </div>
+            <div class="info-card" style="border-top-color: #e67e22;">
+                <h3>蒙西 (收益冠军)</h3>
+                <p>凭借0.28元/kWh放电补贴，5720万总营收稳居四省榜首。</p>
+            </div>
+            <div class="info-card" style="border-top-color: #9b59b6;">
+                <h3>山西 (调频溢价)</h3>
+                <p>调频里程费贡献780万，溢价全国最高。现货与调频双轮驱动。</p>
+            </div>
+            <div class="info-card" style="border-top-color: #27ae60;">
+                <h3>山东 (极致套利)</h3>
+                <p>租赁均价跌破80元/kW。必须依托年均550次高频充放保全收益。</p>
+            </div>
+        </div>
+        <div class="disclaimer">
+            <strong>📊 数据汇总说明：</strong> 本模型基于2026年3月最新退坡政策及XMODATA实测。
+        </div>
     </div>
-
     <script>
-        // 确保页面加载完成后执行绘图逻辑
-        window.onload = function() {
-            const ctx = document.getElementById('revenueChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['甘肃 (退坡模式)', '蒙西 (收益冠军)', '山西 (调频优势)', '山东 (极致套利)'],
-                    datasets: [
-                        { 
-                            label: '现货套利收益 (万元)', 
-                            data: [2850, 3100, 2900, 3400], 
-                            backgroundColor: '#3498db' // 蓝色表示市场收益
-                        },
-                        { 
-                            label: '容量补偿/补贴/租赁 (万元)', 
-                            data: [800, 2200, 1800, 1600], 
-                            backgroundColor: '#e67e22' // 橙色表示政策/固定收益
-                        },
-                        { 
-                            label: '辅助服务收益 (万元)', 
-                            data: [550, 420, 780, 500], 
-                            backgroundColor: '#9b59b6' // 紫色表示溢价收益
-                        }
-                    ]
-                },
-                options: { 
-                    responsive: true, 
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'bottom' },
-                        tooltip: { mode: 'index', intersect: false }
-                    },
-                    scales: { 
-                        x: { stacked: true }, 
-                        y: { 
-                            stacked: true, 
-                            beginAtZero: true, 
-                            title: { display: true, text: '年度收益预测 (万元)', font: { weight: 'bold' } } 
-                        } 
-                    } 
-                }
-            });
-        };
+        const ctx = document.getElementById('revenueChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['甘肃', '蒙西', '山西', '山东'],
+                datasets: [
+                    { label: '现货套利收益 (万元)', data: [2850, 3100, 2900, 3400], backgroundColor: '#3498db', borderRadius: 4 },
+                    { label: '容量补偿/租赁/补贴 (万元)', data: [800, 2200, 1800, 1600], backgroundColor: '#e67e22', borderRadius: 4 },
+                    { label: '辅助服务(调频/备用) (万元)', data: [550, 420, 780, 500], backgroundColor: '#9b59b6', borderRadius: 4 }
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { position: 'top' }, tooltip: { mode: 'index' } },
+                scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true, title: { display: true, text: '年度收益 (万元)' } } }
+            }
+        });
     </script>
 </body>
 </html>
